@@ -27,11 +27,8 @@
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
-        
-        
 
-
+        
         private PayloadVertex DrawTraverse(TokenGraph graph, ITree tree, Parser parser)
         {
             PayloadVertex vertex;

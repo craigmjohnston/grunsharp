@@ -1,5 +1,6 @@
 ﻿namespace GrunCS.Graphs
 {
+    using System;
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
 
@@ -41,9 +42,7 @@
         {
             get
             {
-                string text = this.Token.Text;
-
-                if (string.IsNullOrWhiteSpace(text) && !text.Contains("\n"))
+                if (string.IsNullOrWhiteSpace(this.Token.Text) && (this.Token.Text == null || !this.Token.Text.Contains("\n")))
                 {
                     return $"<{MainWindow.LexerSymbolicNames[this.Token.Type]}>";
                 }

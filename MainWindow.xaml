@@ -22,12 +22,13 @@
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
         <controls:ZoomControl Grid.Column="2" Zoom="1" ZoomBoxOpacity="0.5" Mode="Fill">
             <graphs:TokenGraphLayout x:Name="GraphLayout" Margin="10" Graph="{Binding Path=Graph}"
-                                     LayoutAlgorithmType="EfficientSugiyama" OverlapRemovalAlgorithmType="FSA">
+                                     LayoutAlgorithmType="EfficientSugiyama">
                 <graphs:TokenGraphLayout.LayoutParameters>
                     <layout:EfficientSugiyamaLayoutParameters 
                         EdgeRouting="Orthogonal"
-                        OptimizeWidth="True"
-                        PositionMode="0"></layout:EfficientSugiyamaLayoutParameters>
+                        PositionMode="0"
+                        LayerDistance="17"
+                        MinimizeEdgeLength="True"></layout:EfficientSugiyamaLayoutParameters>
                 </graphs:TokenGraphLayout.LayoutParameters>
             </graphs:TokenGraphLayout>
         </controls:ZoomControl>

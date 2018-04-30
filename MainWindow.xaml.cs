@@ -5,6 +5,7 @@
     using System.Data;
     using System.IO;
     using System.Reflection;
+    using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Media;
@@ -48,12 +49,22 @@
             }
             else if (tree.Payload is IToken)
             {
-                text = ((IToken) tree.Payload).Text.Replace("\n", "\\n");
+                var token = (IToken) tree.Payload;
+                
+                if (string.IsNullOrWhiteSpace(token.Text) && (token.Text == null || !token.Text.Contains("\n")))
+                {
+                    text = $"<{MainWindow.LexerSymbolicNames[token.Type]}>";
+                }
+                else
+                {
+                    text = token.Text.Replace("\n", "\\n");
+                }
             }
             
             var result = new TreeViewItem
             {
-                Header = text
+                Header = text,
+                FontWeight = tree is IRuleNode ? FontWeights.Bold : FontWeights.Normal
             };
 
             if (tree is IErrorNode)
