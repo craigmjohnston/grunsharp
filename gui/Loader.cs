@@ -29,64 +29,18 @@
         }
 
 
-        public static string[] FindFiles(string grammarName, string startRule, string directoryPath, string[] includes)
+        public static string[] FindFiles(string directoryPath, string[] includes)
         {
-            string[] files = Directory.GetFiles(directoryPath, "*.cs");
-            string[] filenamesWithoutExtensions = files.Select(Path.GetFileNameWithoutExtension).ToArray();
-
-            HashSet<string> output = new HashSet<string>();
-
-            string lexerName = grammarName + "Lexer";
-            if (filenamesWithoutExtensions.Contains(lexerName))
-            {
-                output.Add(files[Array.IndexOf(filenamesWithoutExtensions, lexerName)]);
-            }
-            else
-            {
-                lexerName = grammarName;
-                if (filenamesWithoutExtensions.Contains(lexerName))
-                {
-                    output.Add(files[Array.IndexOf(filenamesWithoutExtensions, lexerName)]);
-                }
-                else
-                {
-                    throw new FileNotFoundException($"Can't load {lexerName} as lexer or parser");
-                }
-            }
-
-            if (startRule != "tokens")
-            {
-                string parserName = grammarName + "Parser";
-                if (filenamesWithoutExtensions.Contains(parserName))
-                {
-                    output.Add(files[Array.IndexOf(filenamesWithoutExtensions, parserName)]);
-
-                    if (filenamesWithoutExtensions.Contains(parserName + "Listener"))
-                    {
-                        output.Add(files[Array.IndexOf(filenamesWithoutExtensions, parserName + "Listener")]);
-                    }
-                    else
-                    {
-                        throw new FileNotFoundException($"Can't find {parserName}Listener parser listener file");
-                    }
-                }
-                else
-                {
-                    throw new FileNotFoundException($"Can't find {parserName} parser file");
-                }
-            }
-
-            foreach (var include in includes)
-            {
-                output.Add(include);
-            }
-
-            return output.ToArray();
+            return Directory.GetFiles(directoryPath, "*.cs").Concat(includes).Distinct().ToArray();
         }
         
         
         public static Assembly Compile(string[] filePaths, string[] references)
         {
+            // set the current directory to the EXE directory, to fix an issue with roslyn not being found sometimes
+            var actualWorkingDirectory = Environment.CurrentDirectory;
+            Environment.CurrentDirectory = Main.ExeDirectory;
+            
             var codeProvider = new CSharpCodeProvider();
 
             List<string> assemblyNames = new List<string>
@@ -134,6 +88,7 @@
                 throw new Exception(errorText);
             }
             
+            Environment.CurrentDirectory = actualWorkingDirectory;
             return result.CompiledAssembly;
         }
     }

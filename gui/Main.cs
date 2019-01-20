@@ -1,15 +1,11 @@
 ﻿namespace GrunCS
 {
     using System;
-    using System.CodeDom.Compiler;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
     using Antlr4.Runtime;
-    using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
-    using Newtonsoft.Json;
 
     public class Main
     {
@@ -22,13 +18,15 @@
 
         public string ConfigFileLocation { get; set; } = null;
         
+        public static string ExeDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+        
         public void Process(string workingDirectory, string grammarName, string startRule, string testFile)
         {
             this.config = this.ConfigFileLocation != null 
                 ? Loader.LoadConfigFromPath(this.ConfigFileLocation) 
                 : Loader.LoadConfigFromDirectory(workingDirectory);
             
-            string[] classFiles = Loader.FindFiles(grammarName, startRule, workingDirectory, this.config.Include);
+            string[] classFiles = Loader.FindFiles(workingDirectory, this.config.Include);
             Assembly assembly = Loader.Compile(classFiles, this.config.References);
             
             this.Parse(assembly, testFile, startRule);
